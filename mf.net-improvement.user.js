@@ -41,8 +41,8 @@ function createMenu() {
 }
 
 function loadSetting(setting) {
-  if (GM_getValue) {
-    // Script is running in Greasemonkey, storing data without cookies
+  if (typeof GM_getValue == 'function') {
+    // Greasemonkey-compatible, storing data without cookies
     return GM_getValue(setting, '');
   } else {
     // Script is not running in Greasemonkey storing data with cookies
@@ -51,8 +51,8 @@ function loadSetting(setting) {
 }
 
 function saveSetting(setting, value) {
-  if (GM_getValue) {
-    // Script is running in Greasemonkey, storing data without cookies
+  if (typeof GM_getValue == 'function') {
+    // Greasemonkey-compatible, storing data without cookies
     GM_setValue(setting, value);
   } else {
     // Script is not running in Greasemonkey storing data with cookies
