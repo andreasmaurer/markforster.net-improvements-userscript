@@ -6,7 +6,7 @@
 // ==/UserScript==
 
 var isEscBlocked, isOpenInNewWindow, isJumpToLastPage, isJumpToBottom, isHighlightNewPosts;
-var changes, lastChecked, lastReplies, lastTopic, tempReplies, tempTopic, first, count, rows, cells, i, j, debug;                                                      
+var changes, lastChecked, lastReplies, lastTopic, tempReplies, tempTopic, first, count, rows, cells, i, j, debug, isHighlightMark;                                                      
 
 debug = 0;
 
@@ -25,6 +25,12 @@ if (document.location == 'http://www.markforster.net/forum' || document.location
   }
   if (isHighlightNewPosts == '1') {
     highlightNewTopics();
+  }
+}
+
+if (document.location.toString().indexOf('http://www.markforster.net/forum/post') != -1) {
+  if (isHighlightNewPosts == '1') {
+    highlightPosts();
   }
 }
 
@@ -63,6 +69,15 @@ function loadSettings() {
   if (lastReplies === '') {
     lastReplies = getCookie("lastRepliesForum");
   }
+  previousChecked = loadSetting("previousCheckedForum");
+  if (previousChecked === '') {
+    previousChecked = getCookie("previousCheckedForum");
+  }
+  isHighlightMark = loadSetting('isHighlightMark');
+  if (isHighlightMark === '') {
+    isHighlightMark = 0;
+    saveSetting('isHighlightMark', isHighlightMark);
+  }
 }
 
 function createMenu() {
@@ -80,6 +95,10 @@ function createMenu() {
                     + (isHighlightNewPosts == '1' ? ' checked="checked"' : '')
                     + ' id="checkHighlightNewPosts" /> '
                     + '<label for="checkHighlightNewPosts">Highlight New Topics/Posts</label>'
+                    + '<br /><input type="checkbox"'
+                    + (isHighlightMark == '1' ? ' checked="checked"' : '')
+                    + ' id="checkHighlightMark" /> '
+                    + '<label for="checkHighlightMark">Highlight Mark&#39;s Posts</label>'
                     + '<br /><input type="checkbox"'
                     + (isJumpToLastPage == '1' ? ' checked="checked"' : '')
                     + ' id="checkJumpToLastPage" /> '
@@ -112,6 +131,8 @@ function createMenu() {
   checkbox.addEventListener('click', toggleOpenInNewWindow, false);
   var checkbox = document.getElementById('checkHighlightNewPosts');
   checkbox.addEventListener('click', toggleHighlightNewPosts, false);
+  var checkbox = document.getElementById('checkHighlightMark');
+  checkbox.addEventListener('click', toggleHighlightMark, false);
 }
 
 function isNewerTopic(lastCheck, currentChecked)
@@ -289,6 +310,14 @@ function toggleHighlightNewPosts() {
   } else {
     unhighlightNewTopics();
   }
+  highlightPosts();
+}
+
+function toggleHighlightMark() {
+  var checkbox = document.getElementById('checkHighlightMark');
+  isHighlightMark = checkbox.checked ? '1':'0'
+  saveSetting('isHighlightMark', isHighlightMark);
+  highlightPosts();
 }
 
 function highlightNewTopics() {
@@ -362,6 +391,37 @@ function unhighlightNewTopics() {
  
 }
 
+function highlightPosts() {
+  var divs = document.getElementById('content').getElementsByTagName('div');
+  var first = 1;
+  for (var i = 0; i < divs.length; i++) {
+    if (divs[i].getAttribute("class") == "signature") {
+      date = divs[i].childNodes[0].nodeValue.trim();
+      date = date.substr(0,date.length-2);
+      if (isHighlightNewPosts == '1' && previousChecked != "" && isNewerTopic(previousChecked, date)) {
+        post = divs[i].parentNode.parentNode;
+        if (isHighlightMark == '0'
+        || post.getAttribute("class").indexOf("authored-by-markforster") == -1) {
+          post.setAttribute("style","background-color:#FFA;");
+        } else {
+          post.setAttribute("style","background-color:#AFA;");
+        }
+        if (first) {
+          first = 0;
+          window.scrollTo(0, post.offsetTop); 
+        }
+      } else {
+        post = divs[i].parentNode.parentNode;
+        if (isHighlightMark == '1'
+        && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
+          post.setAttribute("style","background-color:#DDFFDD;");
+        } else {
+          post.removeAttribute("style");
+        }
+      }
+    }
+  }
+}
 
 /* http://www.w3schools.com/jS/js_cookies.asp */
 function setCookie(c_name,value,expiredays) {
