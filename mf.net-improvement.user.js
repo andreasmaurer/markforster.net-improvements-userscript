@@ -2,6 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
+// @version        1
 // @include        http://www.markforster.net/*
 // ==/UserScript==
 
