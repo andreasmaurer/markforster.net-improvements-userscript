@@ -5,7 +5,10 @@
 // @include        http://www.markforster.net/*
 // ==/UserScript==
 
-var isEscBlocked, isOpenInNewWindow, isJumpToLastPage, isJumpToBottom;
+var isEscBlocked, isOpenInNewWindow, isJumpToLastPage, isJumpToBottom, isHighlightNewPosts;
+var changes, lastChecked, lastReplies, lastTopic, tempReplies, tempTopic, first, count, rows, cells, i, j, debug;                                                      
+
+debug = 0;
 
 loadSettings();
 createMenu();
@@ -19,6 +22,9 @@ if (document.location == 'http://www.markforster.net/forum' || document.location
   || isJumpToLastPage == '1'
   || isJumpToBottom == '1') {
     modifyLinks();
+  }
+  if (isHighlightNewPosts == '1') {
+    highlightNewTopics();
   }
 }
 
@@ -44,6 +50,19 @@ function loadSettings() {
     isJumpToBottom = 1;
     saveSetting('isJumpToBottom', isJumpToBottom);
   }
+  isHighlightNewPosts = loadSetting('isHighlightNewPosts');
+  if (isHighlightNewPosts === '') {
+    isHighlightNewPosts = 1;
+    saveSetting('isHighlightNewPosts', isHighlightNewPosts);
+  }
+  lastChecked = loadSetting("lastCheckedForum");
+  if (lastChecked === '') {
+    lastChecked = getCookie("lastCheckedForum");
+  } 
+  lastReplies = loadSetting("lastRepliesForum");
+  if (lastReplies === '') {
+    lastReplies = getCookie("lastRepliesForum");
+  }
 }
 
 function createMenu() {
@@ -58,6 +77,10 @@ function createMenu() {
                     + '<div id="imp" class="widget-wrapper widget-type-page">'
                     + '<b>Forum</b><br />'
                     + '<input type="checkbox"'
+                    + (isHighlightNewPosts == '1' ? ' checked="checked"' : '')
+                    + ' id="checkHighlightNewPosts" /> '
+                    + '<label for="checkHighlightNewPosts">Highlight New Topics/Posts</label>'
+                    + '<br /><input type="checkbox"'
                     + (isJumpToLastPage == '1' ? ' checked="checked"' : '')
                     + ' id="checkJumpToLastPage" /> '
                     + '<label for="checkJumpToLastPage">Open Topic: Go to Last Page</label>'
@@ -87,6 +110,80 @@ function createMenu() {
   checkbox.addEventListener('click', toggleJumpToBottom, false);
   var checkbox = document.getElementById('checkOpenInNewWindow');
   checkbox.addEventListener('click', toggleOpenInNewWindow, false);
+  var checkbox = document.getElementById('checkHighlightNewPosts');
+  checkbox.addEventListener('click', toggleHighlightNewPosts, false);
+}
+
+function isNewerTopic(lastCheck, currentChecked)
+{
+  var then, now;
+  then = getNumericalDate(lastCheck);
+  now = getNumericalDate(currentChecked);
+  if (debug) alert (now + " > " + then + " ?");
+  
+  return now > then;
+}
+
+function getNumericalDate(dateString)
+{
+  var date = 0;
+  var month = 0;
+  var parts = dateString.split(" ");
+  switch(parts[0]) {
+  case "January":
+    month = 1;
+    break;
+  case "February":
+    month = 2;
+    break;
+  case "March":
+    month = 3;
+    break;
+  case "April":
+    month = 4;
+    break;
+  case "May":
+    month = 5;
+    break;
+  case "June":
+    month = 6;
+    break;
+  case "July":
+    month = 7;
+    break;
+  case "August":
+    month = 8;
+    break;
+  case "September":
+    month = 9;
+    break;
+  case "October":
+    month = 10;
+    break;
+  case "November":
+    month = 11;
+    break;
+  case "December":
+    month = 12;
+    break;
+  default:
+    break;
+} 
+  date += month * 1000000;
+  if (debug) alert(parts[0] + " -> " + date);
+  day = parts[1].substring(0, parts[1].length-1);  
+  date += day * 10000;
+  if (debug) alert(parts[1] + " -> " + date);
+  year = parts[2];
+  date += year * 100000000;
+  if (debug) alert(parts[2] + " -> " + date);
+  var time =  parts[4].split(":");
+  date += time[0] * 100;
+  if (debug) alert(parts[4] + " -> " + date);
+ 
+  date += time[1] *1;
+  if (debug) alert(parts[4] + " -> " + date);
+  return date;
 }
 
 function loadSetting(setting) {
@@ -181,6 +278,88 @@ function modifyLink(link) {
   } else {
     link.removeAttribute('target');  
   }
+}
+
+function toggleHighlightNewPosts() {
+  var checkbox = document.getElementById('checkHighlightNewPosts');
+  isHighlightNewPosts = checkbox.checked ? '1':'0'
+  saveSetting('isHighlightNewPosts', isHighlightNewPosts);
+  if (isHighlightNewPosts == '1') {
+    highlightNewTopics();
+  } else {
+    unhighlightNewTopics();
+  }
+}
+
+function highlightNewTopics() {
+  changes = 0;
+  
+  count = 0;
+  rows = document.getElementsByTagName('tr');
+  
+  for (var i = 0; i < rows.length; i++)
+  { 
+    if (debug) alert("i: " + i);
+    count += 1;
+    if (count == 1) continue;
+    if (debug) alert("Schleifendurchgang " + count);
+  
+    cells = rows[i].getElementsByTagName('td');
+    for (var j = 0; j < cells.length; j++)
+    {
+      if (count == 2)
+      {
+        if ((cells[j].getAttribute("class") == "replycount-cell" 
+        && lastReplies != cells[j].innerHTML)) {
+          tempReplies = cells[j].innerHTML;
+          if (debug) alert(tempReplies + " != " + lastReplies);
+        }
+        if (cells[j].getAttribute("class") == "updated-cell") {
+          if (debug) alert ("updated cell");
+          if (!tempReplies && lastChecked == cells[j].childNodes[1].innerHTML) {
+            if (debug) alert("No changes!");
+            break;
+          } else {
+            if (debug && !tempReplies) alert(lastChecked + "!= " + cells[j].childNodes[1].innerHTML);
+            changes = 1;
+            tempChecked = cells[j].childNodes[1].innerHTML;
+  
+            if (tempReplies) saveSetting("lastRepliesForum", tempReplies);
+            saveSetting("lastCheckedForum", tempChecked);
+            saveSetting("previousCheckedForum", lastChecked);
+            
+          }
+        }
+      }
+      
+      if (debug) alert("changes: " + changes);
+      if (cells[j].getAttribute("class") == "updated-cell")
+      {
+        if (isNewerTopic(lastChecked, cells[j].childNodes[1].innerHTML))
+        { 
+          if (debug) alert ("Found newer topic!");
+          rows[i].setAttribute("style","background-color:#FFA;");
+        } else {
+          if (debug) alert ("No more new topics!");      
+          changes = 0;
+        }
+       
+      }
+    }
+  }
+}
+
+function unhighlightNewTopics() {
+  count = 0;
+  rows = document.getElementsByTagName('tr');
+  
+  for (var i = 0; i < rows.length; i++)
+  { 
+    count += 1;
+    if (count == 1) continue;
+    rows[i].removeAttribute("style");
+  }
+ 
 }
 
 
