@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>markforster.net improvement userscript</title>
+<style type="text/css">
+<!--
+html,body,h1 {
+  font-family: "Segoe UI", Candara, "Trebuchet MS", "Lucida Grande", Helvetica, Arial, "Mukti Narrow", Loma, Garuda, sans-serif;
+  font-size:18px;
+  padding:0;
+  margin:0;
+}
+
+a {
+  text-decoration:none;
+  color:#c33;
+}
+
+a:hover {
+  text-decoration:underline;
+}
+
+a:visited {
+  color:#933;
+}
+html,body {
+  background-color:#aaa;
+}
+h1 {
+  text-align:center;
+  padding:20px;
+  background-color:#eee;
+  font-size:24px;
+}
+
+h2 {
+  font-size:22px;
+  clear:both;
+}
+
+h3 {
+  font-size:18px;
+  clear:both;
+}
+
+ul {
+  list-style:none;
+}
+
+img {
+  float:left;
+  margin:0 10px 20px 0
+}
+
+#main {
+  width:40em;
+  max-width:100%;
+  margin:0 auto;
+}
+
+#content {
+  background-color:#ddd;
+  padding:20px;
+}
+.getit a
+{
+  display:block;
+  padding:10px;
+  background-color:#c33;
+  font-weight:bold;
+  color:#fff;
+  width:50%;
+  min-width:10em;
+  text-align:center;
+  margin:0 auto;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+-->
+</style>
+</head>
+<body>
+<div id="main">
+<h1>markforster.net Improvement Userscript</h1>
+<div id="content">
+<p class="getit"><a href="http://andreashofmann.net/public/userscripts/markforster.net-improvement.user.js">Get The Script</a></p>
+<p>This is a userscript for Mark Forster's website, 
+<a href="http://www.markforster.net/">markforster.net</a>. It remedies some
+annoyances and adds some missing functionality, especially regarding the 
+<a href="http://www.markforster.net/forum/">discussion forum</a>.</p>
+<h2>Content</h2>
+<ul>
+<li><a href="#howto">How to Install</a>
+<ul>
+<li><a href="#firefox">Firefox</a>
+<li><a href="#chrome">Chrome</a>
+<li><a href="#opera">Opera</a>
+</ul>
+</li>
+<li><a href="#features">Features</a>
+<ul>
+<li><a href="#options">Options Menu</a></li>
+<li><a href="#highlightnew">Highlight New Topics and Posts</a></li>
+<li><a href="#highlightmark">Highlight Mark Forster's Posts</a></li>
+<li><a href="#lastpage">Go to Last Page When Opening Topics</a></li>
+<li><a href="#bottom">Scroll to Bottom When Opening Topics</a></li>
+<li><a href="#newtab">Open Topics in New Tabs/Windows</a></li>
+<li><a href="#blockesc">Block Esc Key From Forwarding to Login Screen</a></li>
+</ul>
+</li>
+<li><a href="#history">Version History</a></li>
+</ul>
+<h2><a name="howto"></a>How to Install</h2>
+<h3><a name="firefox"></a>Firefox</h3>
+<p>To install userscripts in Firefox, you need to install the 
+<a href="https://addons.mozilla.org/en-US/firefox/addon/748">Greasemonkey</a> extension. If you have Greasemonkey installed, you
+just need to click on the &ldquo;get the script&rdquo; link at the top or bottom
+of this page. Greasemonkey will ask you if you want to install the userscript.
+Click on &ldquo;Install&rdquo; and you're done.</p>
+<h3><a name="chrome"></a>Chrome</h3>
+To use userscripts in Chrome, you need to be on version 4.x (beta) or 5.x 
+(developer). Then it's as simple as clicking on the &ldquo;get the script&rdquo;
+link at the top or bottom of this page. Chrome will show a toolbar at the bottom
+and ask you if you want to install the userscript as an extension. Click on 
+&ldquo;Continue&rdquo; and you're done.
+<h3><a name="opera"></a>Opera</h3>
+In Opera, you need to enable support for userscripts first. To do this, select
+&ldquo;Tools&rdquo;&nbsp;&rarr;&nbsp;&ldquo;Preferences&rdquo; from the menu. 
+Select the tab &ldquo;Advanced&rdquo; and click on &ldquo;Content&rdquo;. Then
+click on the button &ldquo;JavaScript Options&rdquo;. In the next dialog, you
+need to select a folder on your hard drive to use as the 
+&ldquo;User JavaScript folder&rdquo;. Click &ldquo;OK&rdquo; until you're back
+on the website. Now right-click the &ldquo;get the script&rdquo;
+link at the top or bottom of this page and select &ldquo;Save Linked Content As
+ ...&rdquo;. Save the script in the folder you selected previously and you're 
+done.
+<h2><a name="features"></a>Features</h2>
+<h3><a name="options"></a>Options Menu</h3>
+<img src="menu.png">
+<p>All features of this script can be activated and deactivated separately
+using the userscript options box that is added <i>at the bottom of the left
+sidebar</i>.</p>
+<p>Checking and unchecking the checkboxes changes the behaviour or look of the
+page immediately without reload.</p>
+<h3><a name="highlightnew"></a>Highlight New Topics and Posts</h3>
+<p>This is a very useful feature, that highlights new topics and posts with a 
+bright yellow color. There are two aspects of this script: highlighting topics
+with new posts on the forum main page and highlighting new posts in the topic
+view.</p> 
+<p>Currently, there is no concept of read/unread tasks. When the forum main page
+is loaded, all topics that have posts that have been added since the main page
+was loaded the last time are highlighted. This means that if you reload the
+main page after highlighting was applied, no topics will be highlighted (unless
+new posts were added between the first and the last loading). On the other hand,
+when you're inside a topic, the highlight is permanent, until the timestamps 
+were updated by reloading the main page and detecting new posts.</p>
+<h3><a name="highlightmark"></a>Highlight Mark Forster's Posts</h3>
+<p>This feature highlights all posts in the discussion forum that were written by site owner Mark Forster. This can be combined with the highlighting of new posts. New posts by Mark will be highlighted in bright green, older posts in a lighter shade of green.</p>
+<h3><a name="lastpage"></a>Go to Last Page When Opening Topics</h3>
+<p>Once a topic has multiple topics, you need to scroll to the bottom and click
+on the page navigation bar to get to the last page and the newest posts. This
+feature brings you to the last page automatically when clicking on topcis on the
+forum main page.</p>
+<h3><a name="bottom"></a>Scroll to Bottom When Opening Topics</h3>
+<p>While on the main page, the newest topics are at the top, once you click on
+a topic, the newest posts are always at the bottom. Also, the navigation bar
+which allows moving through the pages pf a topic is at the bottom. So one of
+the first things many people do after clicking on a topic is pressing the 
+&ldquo;end&rdquo; key, which scrolls to the bottom of the page. If you activate
+this feature, the script will do this for you.</p>
+<h3><a name="newtab"></a>Open Topics in New Tabs/Windows</h3>
+<p>If you activate this feature, clicking on topics on the forum main page will
+open them in new windows or tabs (if the browser supports it). This is useful
+to avoid losing the highlighting of new topics on the forum main page.</p>
+<h3><a name="blockesc"></a>Block Esc Key From Forwarding to Login Screen</h3>
+<p>Pressing the &ldquo;esc&rdquo; key causes the website to forward you to the
+login screen. This is a useless function, since the only person who can login
+using this logon screen is Mark Forster himself. And if you have the habit of
+closing dialogs or the search bar by pressing the esc key, you'll involuntarily
+trigger this. If you activate this feature, pressing the esc key will no longer
+have any effect.</p>
+<h2><a name="history"></a>Version History</h2>
+<h3>2010-02-20 &ndash; Version 1</h3>
+<ul>
+<li>Highlight New Topics and Posts</li>
+<li>Highlight Mark Forster's Posts</li>
+<li>Go to Last Page When Opening Topics</li>
+<li>Scroll to Bottom When Opening Topics</li>
+<li>Open Topics in New Tabs/Windows</li>
+<li>Block Esc Key From Forwarding to Login Screen</li>
+</ul>
+<p class="getit"><a href="http://andreashofmann.net/public/userscripts/markforster.net-improvement.user.js">Get The Script</a></p>
+</div>
+</div>
+</body>
+</html>
