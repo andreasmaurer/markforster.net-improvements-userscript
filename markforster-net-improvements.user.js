@@ -2,7 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        2.0.1
+// @version        2.0.2
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
 // ==/UserScript==
@@ -511,7 +511,6 @@ function highlightNewTopics() {
   {
     if (debug) alert("i: " + i);
     count += 1;
-    if (count == 1) continue;
     if (debug) alert("Schleifendurchgang " + count);
 
     cells = rows[i].getElementsByTagName('td');
