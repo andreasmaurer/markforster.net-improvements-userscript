@@ -7,8 +7,8 @@
 // @include        http://markforster.squarespace.com/*
 // ==/UserScript==
 
-var isEscBlocked, isOpenInNewWindow, isJumpToLastPage, isJumpToBottom, isHighlightNewPosts, commentPosts = [];
-var changes, lastChecked, lastReplies, lastTopic, tempReplies, tempTopic, first, count, rows, cells, i, j, debug, isHighlightMark, isHighlightNorman, isShowOnlyNorman, isNormanInBlack, isCompactPostsBox, isRemoveRedundantComments, isCompactCommentsBox;                                                      
+var isEscBlocked, isOpenInNewWindow, isJumpToLastPage, isJumpToBottom, isHighlightNewPosts, commentPosts = [], previousChecked;
+var changes, lastChecked, lastReplies, lastTopic, tempReplies, tempTopic, first, count, rows, cells, i, j, debug, isHighlightMark, isHighlightNorman, isShowOnlyNorman, isNormanInBlack, isCompactPostsBox, isRemoveRedundantComments, isCompactCommentsBox;
 
 debug = 0;
 
@@ -74,7 +74,7 @@ function loadSettings() {
   lastChecked = loadSetting("lastCheckedForum");
   if (lastChecked === '') {
     lastChecked = getCookie("lastCheckedForum");
-  } 
+  }
   lastReplies = loadSetting("lastRepliesForum");
   if (lastReplies === '') {
     lastReplies = getCookie("lastRepliesForum");
@@ -189,27 +189,27 @@ function createMenu() {
   sidebar1.appendChild(menuBox);
   var checkbox = document.getElementById('checkEscBlocked');
   checkbox.addEventListener('click', toggleEscBlocked, false);
-  var checkbox = document.getElementById('checkJumpToLastPage');
+  checkbox = document.getElementById('checkJumpToLastPage');
   checkbox.addEventListener('click', toggleJumpToLastPage, false);
-  var checkbox = document.getElementById('checkJumpToBottom');
+  checkbox = document.getElementById('checkJumpToBottom');
   checkbox.addEventListener('click', toggleJumpToBottom, false);
-  var checkbox = document.getElementById('checkOpenInNewWindow');
+  checkbox = document.getElementById('checkOpenInNewWindow');
   checkbox.addEventListener('click', toggleOpenInNewWindow, false);
-  var checkbox = document.getElementById('checkHighlightNewPosts');
+  checkbox = document.getElementById('checkHighlightNewPosts');
   checkbox.addEventListener('click', toggleHighlightNewPosts, false);
-  var checkbox = document.getElementById('checkHighlightMark');
+  checkbox = document.getElementById('checkHighlightMark');
   checkbox.addEventListener('click', toggleHighlightMark, false);
-  var checkbox = document.getElementById('checkHighlightNorman');
+  checkbox = document.getElementById('checkHighlightNorman');
   checkbox.addEventListener('click', toggleHighlightNorman, false);
-  var checkbox = document.getElementById('checkShowOnlyNorman');
+  checkbox = document.getElementById('checkShowOnlyNorman');
   checkbox.addEventListener('click', toggleShowOnlyNorman, false);
-  var checkbox = document.getElementById('checkNormanInBlack');
+  checkbox = document.getElementById('checkNormanInBlack');
   checkbox.addEventListener('click', toggleNormanInBlack, false);
-  var checkbox = document.getElementById('checkCompactPostsBox');
+  checkbox = document.getElementById('checkCompactPostsBox');
   checkbox.addEventListener('click', toggleCompactPostsBox, false);
-  var checkbox = document.getElementById('checkRemoveRedundantComments');
+  checkbox = document.getElementById('checkRemoveRedundantComments');
   checkbox.addEventListener('click', toggleRemoveRedundantComments, false);
-  var checkbox = document.getElementById('checkCompactCommentsBox');
+  checkbox = document.getElementById('checkCompactCommentsBox');
   checkbox.addEventListener('click', toggleCompactCommentsBox, false);
 }
 
@@ -219,7 +219,7 @@ function isNewerTopic(lastCheck, currentChecked)
   then = getNumericalDate(lastCheck);
   now = getNumericalDate(currentChecked);
   if (debug) alert (now + " > " + then + " ?");
-  
+
   return now > then;
 }
 
@@ -267,19 +267,19 @@ function getNumericalDate(dateString)
     break;
   default:
     break;
-} 
+}
   date += month * 1000000;
   if (debug) alert(parts[0] + " -> " + date);
-  day = parts[1].substring(0, parts[1].length-1);  
+  var day = parts[1].substring(0, parts[1].length-1);
   date += day * 10000;
   if (debug) alert(parts[1] + " -> " + date);
-  year = parts[2];
+  var year = parts[2];
   date += year * 100000000;
   if (debug) alert(parts[2] + " -> " + date);
-  var time =  parts[4].split(":");
+  var time = parts[4].split(":");
   date += time[0] * 100;
   if (debug) alert(parts[4] + " -> " + date);
- 
+
   date += time[1] *1;
   if (debug) alert(parts[4] + " -> " + date);
   return date;
@@ -325,9 +325,9 @@ function unblockEsc() {
 }
 
 function keyHandler(event) {
-  if (event.keyCode == 27) {  
+  if (event.keyCode == 27) {
     event.stopPropagation();
-    return true; 
+    return true;
   }
   return false;
 }
@@ -369,13 +369,13 @@ function modifyLink(link) {
   if (address.indexOf('#') != -1) {
     address = address.substring(0, address.indexOf('#'));
   }
-  link.setAttribute('href', address 
+  link.setAttribute('href', address
     + (isJumpToLastPage == '1' ? '?lastPage=true' : '')
     + (isJumpToBottom == '1' ? '#new-post-button' : ''));
   if (isOpenInNewWindow == '1') {
     link.setAttribute('target', '_blank');
   } else {
-    link.removeAttribute('target');  
+    link.removeAttribute('target');
   }
 }
 
@@ -438,8 +438,11 @@ function toggleCompactCommentsBox() {
 }
 
 function modifyCommentsBox() {
-  var posts = document.getElementById('moduleContent6087109').getElementsByTagName('li');
+  var box = document.getElementById('moduleContent6087109');
+  if (!box) return;
+  var posts = box.getElementsByTagName('li');
   var first = 1;
+  var length, index, j;
   for (var i = 0; i < posts.length; i++) {
     if (isCompactCommentsBox == '1' ) {
       if (first == 1) {
@@ -448,18 +451,18 @@ function modifyCommentsBox() {
       } else {
         posts[i].setAttribute('style', 'margin:0;padding:5px 0;');
       }
-      var length = posts[i].childNodes.length;
-      for (var j = 1 ; j <= length ; j++) {
-        var index = length - j;
+      length = posts[i].childNodes.length;
+      for (j = 1 ; j <= length ; j++) {
+        index = length - j;
         if(posts[i].childNodes[index].nodeName != 'A') {
           posts[i].removeChild(posts[i].childNodes[index]);
-        } 
+        }
       }
-    } 
+    }
     if (isRemoveRedundantComments == '1' ) {
-      var length = posts[i].childNodes.length;
-      for (var j = 1 ; j <= length ; j++) {
-        var index = length - j;
+      length = posts[i].childNodes.length;
+      for (j = 1 ; j <= length ; j++) {
+        index = length - j;
         if(posts[i].childNodes[index].nodeName == 'A') {
           var title = posts[i].childNodes[index].innerHTML;
           if (commentPosts.indexOf(title) == -1) {
@@ -474,7 +477,9 @@ function modifyCommentsBox() {
 }
 
 function modifyPostsBox() {
-  var posts = document.getElementById('moduleContent6069483').getElementsByTagName('li');
+  var box = document.getElementById('moduleContent6069483');
+  if (!box) return;
+  var posts = box.getElementsByTagName('li');
   var first = 1;
   for (var i = 0; i < posts.length; i++)
   {
@@ -490,31 +495,31 @@ function modifyPostsBox() {
         var index = length - j;
         if(posts[i].childNodes[index].nodeName != 'A') {
           posts[i].removeChild(posts[i].childNodes[index]);
-        } 
+        }
       }
-    } 
+    }
   }
 }
 
 function highlightNewTopics() {
   changes = 0;
-  
+
   count = 0;
   rows = document.getElementsByTagName('tr');
-  
+
   for (var i = 0; i < rows.length; i++)
-  { 
+  {
     if (debug) alert("i: " + i);
     count += 1;
     if (count == 1) continue;
     if (debug) alert("Schleifendurchgang " + count);
-  
+
     cells = rows[i].getElementsByTagName('td');
     for (var j = 0; j < cells.length; j++)
     {
       if (count == 2)
       {
-        if ((cells[j].getAttribute("class") == "replycount-cell" 
+        if ((cells[j].getAttribute("class") == "replycount-cell"
         && lastReplies != cells[j].innerHTML)) {
           tempReplies = cells[j].innerHTML;
           if (debug) alert(tempReplies + " != " + lastReplies);
@@ -527,28 +532,28 @@ function highlightNewTopics() {
           } else {
             if (debug && !tempReplies) alert(lastChecked + "!= " + cells[j].childNodes[1].innerHTML);
             changes = 1;
-            tempChecked = cells[j].childNodes[1].innerHTML;
-  
+            var tempChecked = cells[j].childNodes[1].innerHTML;
+
             if (tempReplies) saveSetting("lastRepliesForum", tempReplies);
             saveSetting("lastCheckedForum", tempChecked);
             saveSetting("previousCheckedForum", lastChecked);
-            
+
           }
         }
       }
-      
+
       if (debug) alert("changes: " + changes);
       if (cells[j].getAttribute("class") == "updated-cell")
       {
         if (isNewerTopic(lastChecked, cells[j].childNodes[1].innerHTML))
-        { 
+        {
           if (debug) alert ("Found newer topic!");
           rows[i].setAttribute("style","background-color:#FFA;");
         } else {
-          if (debug) alert ("No more new topics!");      
+          if (debug) alert ("No more new topics!");
           changes = 0;
         }
-       
+
       }
     }
   }
@@ -557,19 +562,20 @@ function highlightNewTopics() {
 function unhighlightNewTopics() {
   count = 0;
   rows = document.getElementsByTagName('tr');
-  
+
   for (var i = 0; i < rows.length; i++)
-  { 
+  {
     count += 1;
     if (count == 1) continue;
     rows[i].removeAttribute("style");
   }
- 
+
 }
 
 function highlightPosts() {
   var divs = document.getElementById('content').getElementsByTagName('div');
   var first = 1;
+  var date, post;
   for (var i = 0; i < divs.length; i++) {
     if (divs[i].getAttribute("class") == "signature") {
       date = divs[i].childNodes[0].nodeValue.trim();
@@ -587,7 +593,7 @@ function highlightPosts() {
         }
         if (first) {
           first = 0;
-          window.scrollTo(0, post.offsetTop); 
+          window.scrollTo(0, post.offsetTop);
         }
       } else {
         post = divs[i].parentNode.parentNode;
@@ -623,6 +629,7 @@ function setCookie(c_name,value,expiredays) {
 
 /* http://www.w3schools.com/jS/js_cookies.asp */
 function getCookie(c_name) {
+  var c_start, c_end;
   if (document.cookie.length>0) {
     c_start=document.cookie.indexOf(c_name + "=");
     if (c_start!=-1) {
