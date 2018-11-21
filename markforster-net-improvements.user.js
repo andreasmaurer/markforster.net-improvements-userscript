@@ -19,7 +19,7 @@ if (isEscBlocked == '1') {
   blockEsc();
 }
 
-if (document.location == 'http://www.markforster.net/forum' || document.location == 'http://www.markforster.net/forum/') {
+if (document.location.pathname == '/forum' || document.location.pathname == '/forum/') {
   if (isOpenInNewWindow == '1'
   || isJumpToLastPage == '1'
   || isJumpToBottom == '1') {
@@ -30,7 +30,7 @@ if (document.location == 'http://www.markforster.net/forum' || document.location
   }
 }
 
-if (document.location.toString().indexOf('http://www.markforster.net/forum/post') != -1) {
+if (document.location.pathname.indexOf('/forum/post') != -1) {
   if (isHighlightNewPosts == '1' || isHighlightMark == '1' || isHighlightNorman == '1' || isShowOnlyNorman == '1' || isNormanInBlack == '1') {
     highlightPosts();
   }
@@ -584,12 +584,12 @@ function highlightPosts() {
         post = divs[i].parentNode.parentNode;
         if (isHighlightMark == '1'
         && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
-          post.setAttribute("style","background-color:#AFA;");
+          post.getElementsByClassName('comment').setAttribute("style","background-color:#AFA;");
         } else if (isHighlightNorman == '1'
-        && divs[i].innerHTML.indexOf("Norman") != -1) {
-          post.setAttribute("style","background-color:#FAA;");
+        && divs[i].innerHTML.indexOf("Norman U") != -1) {
+          post.getElementsByClassName('comment').setAttribute("style","background-color:#FAA;");
         } else {
-          post.setAttribute("style","background-color:#FFA;");
+          post.getElementsByClassName('comment').setAttribute("style","background-color:#FFA;");
         }
         if (first) {
           first = 0;
@@ -599,19 +599,19 @@ function highlightPosts() {
         post = divs[i].parentNode.parentNode;
         if (isHighlightMark == '1'
         && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
-          post.setAttribute("style","background-color:#DDFFDD;");
+          post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#DDFFDD;");
         } else if (isHighlightNorman == '1'
-        && divs[i].innerHTML.indexOf("Norman") != -1) {
-          post.setAttribute("style","background-color:#FFDDDD;");
+        && divs[i].innerHTML.indexOf("Norman U") != -1) {
+          post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#FFDDDD;");
         } else {
-          post.removeAttribute("style");
+          post.getElementsByClassName('comment')[0].removeAttribute("style");
         }
       }
-      if (isNormanInBlack == '1' && divs[i].innerHTML.indexOf("Norman") != -1)
+      if (isNormanInBlack == '1' && divs[i].innerHTML.indexOf("Norman U") != -1)
       {
-          post.setAttribute("style","background-color:#000;");
+          post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#000;color:#000;");
       }
-      if (isShowOnlyNorman == '1' && divs[i].innerHTML.indexOf("Norman") == -1)
+      if (isShowOnlyNorman == '1' && divs[i].innerHTML.indexOf("Norman U") == -1)
       {
           post.setAttribute("style","display:none;");
       }
