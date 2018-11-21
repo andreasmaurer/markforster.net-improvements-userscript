@@ -4,6 +4,7 @@
 // @description    Adds missing features and remedies annoyances
 // @version        2.0.0
 // @include        http://www.markforster.net/*
+// @include        http://markforster.squarespace.com/*
 // ==/UserScript==
 
 var isEscBlocked, isOpenInNewWindow, isJumpToLastPage, isJumpToBottom, isHighlightNewPosts, commentPosts = [];
