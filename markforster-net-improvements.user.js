@@ -2,7 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        2.0.0
+// @version        2.0.1
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
 // ==/UserScript==
@@ -505,7 +505,7 @@ function highlightNewTopics() {
   changes = 0;
 
   count = 0;
-  rows = document.getElementsByTagName('tr');
+  rows = document.getElementsByClassName('discussion-table-row');
 
   for (var i = 0; i < rows.length; i++)
   {
@@ -517,7 +517,7 @@ function highlightNewTopics() {
     cells = rows[i].getElementsByTagName('td');
     for (var j = 0; j < cells.length; j++)
     {
-      if (count == 2)
+      if (count == 1)
       {
         if ((cells[j].getAttribute("class") == "replycount-cell"
         && lastReplies != cells[j].innerHTML)) {
