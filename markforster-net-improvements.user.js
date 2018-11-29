@@ -2,7 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        2.0.2
+// @version        2.0.3
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
 // ==/UserScript==
@@ -572,48 +572,44 @@ function unhighlightNewTopics() {
 }
 
 function highlightPosts() {
-  var divs = document.getElementById('content').getElementsByTagName('div');
+  var divs = document.getElementById('content').getElementsByClassName('signature');
   var first = 1;
   var date, post;
   for (var i = 0; i < divs.length; i++) {
-    if (divs[i].getAttribute("class") == "signature") {
-      date = divs[i].childNodes[0].nodeValue.trim();
-      date = date.substr(0,date.length-2);
-      if (isHighlightNewPosts == '1' && previousChecked != "" && isNewerTopic(previousChecked, date)) {
-        post = divs[i].parentNode.parentNode;
-        if (isHighlightMark == '1'
-        && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
-          post.getElementsByClassName('comment').setAttribute("style","background-color:#AFA;");
-        } else if (isHighlightNorman == '1'
-        && divs[i].innerHTML.indexOf("Norman U") != -1) {
-          post.getElementsByClassName('comment').setAttribute("style","background-color:#FAA;");
-        } else {
-          post.getElementsByClassName('comment').setAttribute("style","background-color:#FFA;");
-        }
-        if (first) {
-          first = 0;
-          window.scrollTo(0, post.offsetTop);
-        }
+    date = divs[i].childNodes[0].nodeValue.trim();
+    date = date.substr(0,date.length-2);
+    if (isHighlightNewPosts == '1' && previousChecked != "" && isNewerTopic(previousChecked, date)) {
+      post = divs[i].parentNode.parentNode;
+      if (isHighlightMark == '1'
+          && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
+        post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#AFA;");
+      } else if (isHighlightNorman == '1'
+                 && divs[i].innerHTML.indexOf("Norman U") != -1) {
+        post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#FAA;");
       } else {
-        post = divs[i].parentNode.parentNode;
-        if (isHighlightMark == '1'
-        && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
-          post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#DDFFDD;");
-        } else if (isHighlightNorman == '1'
-        && divs[i].innerHTML.indexOf("Norman U") != -1) {
-          post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#FFDDDD;");
-        } else {
-          post.getElementsByClassName('comment')[0].removeAttribute("style");
-        }
+        post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#FFA;");
       }
-      if (isNormanInBlack == '1' && divs[i].innerHTML.indexOf("Norman U") != -1)
-      {
-          post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#000;color:#000;");
+      if (first) {
+        first = 0;
+        window.scrollTo(0, post.offsetTop);
       }
-      if (isShowOnlyNorman == '1' && divs[i].innerHTML.indexOf("Norman U") == -1)
-      {
-          post.setAttribute("style","display:none;");
+    } else {
+      post = divs[i].parentNode.parentNode;
+      if (isHighlightMark == '1'
+          && post.getAttribute("class").indexOf("authored-by-markforster") != -1) {
+        post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#DDFFDD;");
+      } else if (isHighlightNorman == '1'
+                 && divs[i].innerHTML.indexOf("Norman U") != -1) {
+        post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#FFDDDD;");
+      } else {
+        post.getElementsByClassName('comment')[0].removeAttribute("style");
       }
+    }
+    if (isNormanInBlack == '1' && divs[i].innerHTML.indexOf("Norman U") != -1) {
+      post.getElementsByClassName('comment')[0].setAttribute("style","background-color:#000;color:#000;");
+    }
+    if (isShowOnlyNorman == '1' && divs[i].innerHTML.indexOf("Norman U") == -1) {
+      post.setAttribute("style","display:none;");
     }
   }
 }
@@ -640,4 +636,5 @@ function getCookie(c_name) {
   }
   return '';
 }
+
 
