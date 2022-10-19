@@ -2,7 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        2.0.4
+// @version        2.0.5
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
 // ==/UserScript==
@@ -36,6 +36,9 @@ var isEscBlocked,
   isCompactCommentsBox;
 
 debug = 0;
+
+// Fix for misplaced content, by UmbrellaWeather http://markforster.squarespace.com/forum/post/2791667
+document.getElementById('pageBody').insertAdjacentElement('afterbegin',document.getElementById('contentWrapper'))
 
 loadSettings();
 createMenu();
