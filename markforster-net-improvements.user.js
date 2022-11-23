@@ -2,9 +2,10 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        2.0.5
+// @version        2.0.6
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
+// @include        https://markforster.squarespace.com/*
 // ==/UserScript==
 
 var isEscBlocked,
@@ -37,8 +38,13 @@ var isEscBlocked,
 
 debug = 0;
 
+// Fix for links going to old domain markforster.net
+document.querySelectorAll('a[href*="markforster.net"]').forEach(function(link) {
+    link.href = link.href.replace(/(https?:\/\/)markforster.net/, '$1markforster.squarespace.com')
+});
+
 // Fix for misplaced content, by UmbrellaWeather http://markforster.squarespace.com/forum/post/2791667
-document.getElementById('pageBody').insertAdjacentElement('afterbegin',document.getElementById('contentWrapper'))
+document.getElementById('pageBody').insertAdjacentElement('afterbegin',document.getElementById('contentWrapper'));
 
 loadSettings();
 createMenu();
