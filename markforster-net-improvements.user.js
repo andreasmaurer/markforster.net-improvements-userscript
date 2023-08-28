@@ -43,7 +43,7 @@ const init = () => {
 
     // Fix for links going to old domain markforster.net
     document.querySelectorAll('a[href*="markforster.net"]').forEach(function(link) {
-        link.href = link.href.replace(/(https?:\/\/)markforster.net/, '$1markforster.squarespace.com')
+        link.href = link.href.replace(/(https?:\/\/)(www\.)?markforster.net/, '$1markforster.squarespace.com')
     });
 
     // Fix for misplaced content, by UmbrellaWeather http://markforster.squarespace.com/forum/post/2791667
