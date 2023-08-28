@@ -2,7 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        2.0.7
+// @version        3
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
 // @include        https://markforster.squarespace.com/*
