@@ -2,7 +2,7 @@
 // @name           markforster.net improvements
 // @namespace      http://andreashofmann.net/
 // @description    Adds missing features and remedies annoyances
-// @version        3
+// @version        2025-05-09
 // @include        http://www.markforster.net/*
 // @include        http://markforster.squarespace.com/*
 // @include        https://markforster.squarespace.com/*
@@ -35,7 +35,9 @@ const init = () => {
         isNormanInBlack,
         isCompactPostsBox,
         isRemoveRedundantComments,
-        isCompactCommentsBox;
+        isCompactCommentsBox,
+        isSpamBlocked,
+        spamTopics;
 
     debug = 0;
 
@@ -69,6 +71,7 @@ const init = () => {
         if (isHighlightNewPosts == "1") {
             highlightNewTopics();
         }
+          blockSpam();
     }
 
     if (document.location.pathname.indexOf("/forum/post") != -1) {
@@ -164,6 +167,12 @@ const init = () => {
             isCompactCommentsBox = 1;
             saveSetting("isCompactCommentsBox", isCompactCommentsBox);
         }
+        isSpamBlocked = loadSetting("isSpamBlocked");
+        if (isSpamBlocked === "") {
+            isSpamBlocked = 0;
+            saveSetting("isSpamBlocked", isSpamBlocked);
+        }
+        spamTopics = JSON.parse(loadSetting("spamTopics") || "[]");
     }
 
     function createMenu() {
@@ -186,6 +195,10 @@ const init = () => {
             (isHighlightMark == "1" ? ' checked="checked"' : "") +
             ' id="checkHighlightMark" /> ' +
             '<label for="checkHighlightMark">Highlight Mark&#39;s Posts</label>' +
+            '<br /><input type="checkbox"' +
+            (isSpamBlocked == "1" ? ' checked="checked"' : "") +
+            ' id="checkSpamBlocked" /> ' +
+            '<label for="checkSpamBlocked">Hide posts I mark as spam</label>' +
             '<br /><input type="checkbox"' +
             (isJumpToLastPage == "1" ? ' checked="checked"' : "") +
             ' id="checkJumpToLastPage" /> ' +
@@ -258,6 +271,8 @@ const init = () => {
         checkbox.addEventListener("click", toggleRemoveRedundantComments, false);
         checkbox = document.getElementById("checkCompactCommentsBox");
         checkbox.addEventListener("click", toggleCompactCommentsBox, false);
+        checkbox = document.getElementById("checkSpamBlocked");
+        checkbox.addEventListener("click", toggleSpamBlocked, false);
     }
 
     function isNewerTopic(lastCheck, currentChecked) {
@@ -490,6 +505,13 @@ const init = () => {
         saveSetting("isCompactCommentsBox", isCompactCommentsBox);
     }
 
+    function toggleSpamBlocked() {
+        var checkbox = document.getElementById("checkSpamBlocked");
+        isSpamBlocked = checkbox.checked ? "1" : "0";
+        saveSetting("isSpamBlocked", isSpamBlocked);
+        blockSpam();
+    }
+
     function modifyCommentsBox() {
         var box = document.getElementById("moduleContent6087109");
         if (!box) return;
@@ -606,6 +628,59 @@ const init = () => {
                     }
                 }
             }
+        }
+    }
+
+    function blockSpam() {
+        if (document.getElementsByClassName("activePage")[0].innerText != "1") {
+            return;
+        }
+        changes = 0;
+
+        count = 0;
+        rows = document.getElementsByClassName("discussion-table-row");
+
+        for (var i = 0; i < rows.length; i++) {
+            const link = rows[i].querySelector('.topic-title a');
+            const id = link.href.match(/\/post\/(\d*)/)[1];
+            const isSpam = spamTopics.includes(id);
+            const author = rows[i].querySelector('.topic-author');
+            author.style.display = 'flex';
+            author.style.alignItems = 'center';
+            author.style.gap = '3px';
+            let spamToggle = author.querySelector('.spamtoggle');
+            if (!spamToggle) {
+                spamToggle = document.createElement('a');
+                spamToggle.className = 'spamtoggle';
+                spamToggle.style.border = '1px solid currentcolor';
+                spamToggle.style.display = 'inline-block';
+                spamToggle.style.padding = '3px';
+                spamToggle.style.borderRadius = '3px';
+                spamToggle.style.lineHeight = '1';
+                spamToggle.style.cursor = 'pointer';
+                spamToggle.style.marginLeft = 'auto';
+                spamToggle.addEventListener("click", () => {
+                    if (spamTopics.includes(id)) {
+                        spamTopics.splice(spamTopics.indexOf(id), 1);
+                    } else {
+                        spamTopics.push(id);
+                    }
+                    saveSetting('spamTopics', JSON.stringify(spamTopics));
+                    blockSpam();
+
+                }, false);
+                author.appendChild(spamToggle);
+            }
+            spamToggle.innerText = isSpam ? 'Mark as not spam' : 'Mark as spam';
+            spamToggle.style.display = (isSpamBlocked == '1' && !isSpam || isSpamBlocked != '1' && isSpam) ? 'inline-block' : 'none';
+        console.log(spamToggle, !!isSpamBlocked, isSpam, isSpamBlocked && !isSpam, !isSpamBlocked && isSpam, spamToggle.style.display)
+
+            if (isSpamBlocked == '1' && isSpam) {
+                rows[i].style.display = 'none'
+            } else {
+                rows[i].style.display = 'table-row'
+            }
+
         }
     }
 
